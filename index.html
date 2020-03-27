@@ -1,123 +1,37 @@
-<!DOCTYPE HTML>
-<!--
-	Forty by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
+<!doctype html>
 <html>
-	<head>
-		<title>Home</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
-		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
-	</head>
-	<body>
 
-		<!-- Wrapper -->
-			<div id="wrapper">
+<head>
+    <title>stroop [PsychoPy]</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="user-scalable=no">
 
-				<!-- Header -->
-				<header id="header" class="alt">
-						<!--<a href="index.html" class="logo"><strong>Home</strong></a>-->
-						<nav>
-							<a href="#menu">Menu</a>
-						</nav>
-					</header>
+    <!-- styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <link rel="stylesheet" href="https://lib.pavlovia.org/psychojs.css">
+</head>
 
-				<!-- Menu -->
-					<nav id="menu">
-						<ul class="links">
-							<li><a href="index.html">Home</a></li>
-							<li><a href="papers.html">Publications</a></li>
-							<li><a href="https://twitter.com/ps_whitehead">Twitter</a></li>
-							<li><a href="https://github.com/pswhitehead">GitHub</a></li>
-							<li><a href="https://www.egnerlab.org">Egner Lab</a></li>
-							<li><a href="http://www.woldorfflab.org/">Woldorff Lab</a></li>
-							<!--<li><a href="generic.html">Generic</a></li>
-							<li><a href="elements.html">Elements</a></li>-->
-						</ul>
-					</nav>
+<body>
+    <div id="root"></div>
+     <!-- external libraries -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.1/seedrandom.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.8.7/pixi.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/PreloadJS/1.0.1/preloadjs.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.2/xlsx.full.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/log4javascript/1.4.9/log4javascript.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tone/13.8.6/Tone.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.1.2/howler.min.js"></script>
 
-				<!-- Banner -->
-					<section id="banner" class="major">
-						<div class="inner">
-							<header class="major">
-								<h1>Peter S. Whitehead</h1>
-							</header>
-							<div class="content">
-								<p>Graduate Student in Center for Cognitive Neuroscience at Duke University</p>
-								<ul class="actions">
-								</ul>
-							</div>
-						</div>
-					</section>
+    <!-- experiment -->
+    <script type='module' src='./stroop.js'></script>
 
-				<!-- Main -->
-					<div id="main">
+    <!-- older browsers -->
+    <script nomodule type="text/javascript" src="https://unpkg.com/@ungap/url-search-params"></script>
+    <script nomodule type="text/javascript" src="https://lib.pavlovia.org/psychojs-3.2.js"></script>
+    <script nomodule type="text/javascript" src="./stroopNoModule.js"></script>
+</body>
 
-						<!-- One -->
-							<section id="one" class="tiles">
-								<article>
-									<span class="image">
-										<img src="images/pic01.jpg" alt="" />
-									</span>
-									<header class="major">
-										<h3><a href="papers.html" class="link">Publications</a></h3>
-										<p></p>
-									</header>
-								</article>
-								<article>
-									<span class="image">
-										<img src="images/pic02.jpg" alt="" />
-									</span>
-									<header class="major">
-										<h3><a>About Me</a></h3>
-										<p>I received a B.Mus in Orchestral Performance (Bassoon) and a B.S. in Psychology from Arizona State University in 2016. I am currently pursuing my Ph.D. in Cognitive Neuroscience in the Egner lab and Woldorff lab.
-
-I am interested in how items in working memory influence actions and perception, and how control processes can modulate these influences. I plan to investigate these topics using various methodologies (behavior, modeling, and EEG).</p>
-
-							</section>
-
-							<!-- Contact -->
-								<section id="contact">
-									<div class="inner">
-
-										<section class="split">
-											<section>
-												<div class="contact-method">
-													<span class="icon alt fa-envelope"></span>
-													<h3>Email</h3>
-													<a href="#">peter dot whitehead at duke dot edu</a>
-												</div>
-											</section>
-
-										</section>
-									</div>
-								</section>
-
-							<!-- Footer -->
-								<footer id="footer">
-									<div class="inner">
-
-										<ul class="copyright">
-											<li>Design: <a href="https://html5up.net">HTML5 UP</a></li>
-										</ul>
-									</div>
-								</footer>
-
-						</div>
-
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/jquery.scrolly.min.js"></script>
-			<script src="assets/js/jquery.scrollex.min.js"></script>
-			<script src="assets/js/skel.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
-			<script src="assets/js/main.js"></script>
-
-	</body>
 </html>
