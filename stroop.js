@@ -4,9 +4,9 @@
 
 import { PsychoJS } from './core-3.2.js';
 import * as core from './core-3.2.js';
-import { TrialHandler } from 'https://pavlovia.org/lib/data-3.2.js';
-import { Scheduler } from 'https://pavlovia.org/lib/util-3.2.js';
-import * as util from 'https://pavlovia.org/lib/util-3.2.js';
+import { TrialHandler } from './data-3.2.js';
+import { Scheduler } from './util-3.2.js';
+import * as util from './util-3.2.js';
 import * as visual from 'https://pavlovia.org/lib/visual-3.2.js';
 import { Sound } from 'https://pavlovia.org/lib/sound-3.2.js';
 
