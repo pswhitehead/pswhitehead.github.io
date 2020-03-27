@@ -7,8 +7,7 @@ import * as core from './core-3.2.js';
 import { TrialHandler } from './data-3.2.js';
 import { Scheduler } from './util-3.2.js';
 import * as util from './util-3.2.js';
-import * as visual from 'https://pavlovia.org/lib/visual-3.2.js';
-import { Sound } from 'https://pavlovia.org/lib/sound-3.2.js';
+import * as visual from './visual-3.2.js';
 
 // init psychoJS:
 var psychoJS = new PsychoJS({
