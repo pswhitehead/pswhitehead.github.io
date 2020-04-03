@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="Task.css" type="text/css" charset="utf-8">
+  <script type="text/javascript" src="jquery-3.2.1.js"></script>
+  <script type="text/javascript" src="math.js"></script>
+  <script type="text/javascript" src="trivia.js"></script>
+  <script type="text/javascript">
+
+
+  $(document).ready(function(){
+    $("#form").hide();
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
+    document.getElementById("myCanvas").style.cursor = "none";
+
+    //#######################################################//
+    //-------------GLOBAL EXPERIMENT PARAMETERS--------------//
+    //#######################################################//
+
+    //------------------------TIMINGS-----------------------//
+    var ITEMinterval = 7000
+    var ITIinterval = 1000
+
+    //---------------------TRIAL COUNTS--------------------//
+    var trivialengthprime = 160
+    var trivialengthprobe = 240
+    var interveningtask   = 30
+    var nummindwandering  = 20
+    var numattentionchecks = 10
+
+    //----------------------SHUFFLE FUNCTION------------------//
+    //https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+
+    function shuffle(array) {
+      for (var i = array.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var temp = array[i];
+          array[i] = array[j];
+          array[j] = temp;
+      }
+        return array;
+      };
+
+    function getRandomInt(max) {
+      return Math.floor(Math.random() * Math.floor(max));
+    }
+
+    //#######################################################//
+    //-----------------------LOAD TRIVIA---------------------//
+    //#######################################################//
+
+     triviaitems = facts
+
+    random_item = []
+    for (var g=0;g< (triviaitems.length)-numattentionchecks;g++) {
+      random_item.push(g);
+    }
+
+    shuffle(random_item)
+
+    random_item_probe = []
+    for (var g=0;g< (triviaitems.length)+numattentionchecks;g++) {
+      random_item_probe.push(g);
+    }
+
+    shuffle(random_item_probe)
+
+
+    //#######################################################//
+    //----------------------TRIAL MATRIX---------------------//
+    //#######################################################//
+
+    function createTrialMatrix(){
+      trialmatrix = []
+
+      //Code that lets me print out the trial matrix to a file
+      /*function download(content, fileName, contentType) {
+        var a = document.createElement("a");
+        var file = new Blob([JSON.stringify(content)], {type: contentType});
+        a.href = URL.createObjectURL(file);
+        a.download = fileName;
+        a.click();
+      }*/
+
+      //--------------------MW Interval------------------------------//
+      mindwanderinginterval = [5,6,7,8,9,10,5,6,7,8,9,10,5,6,7,8,9,10,7,8]
+      shuffle(mindwanderinginterval)
+
+      mindwanderingplaces = []
+      for (var g=0; g < mindwanderinginterval.length; g++){
+        mindwanderingplaces.push(math.sum(mindwanderinginterval.slice(-1*(g+1))))
+      }
+
+      //--------------------Trial Types------------------------------//
+      trialtype = []
+      triviafact = []
+
+      h = -1
+      for (var g=0;g< (interveningtask+trivialengthprime+trivialengthprobe+nummindwandering+3);g++){
+        if (g == 0){
+          trialtype.push(0)
+          triviafact.push(9999)
+        }
+        if (g > 0 & g < trivialengthprime+nummindwandering){
+          if (mindwanderingplaces.includes(g-1)){
+            trialtype.push(99)
+            triviafact.push(9999)
+          }
+          else{
+            h++;
+            trialtype.push(1)
+            triviafact.push(random_item[h])
+          }
+        }
+        if (g == trivialengthprime+nummindwandering){
+          trialtype.push(2)
+          triviafact.push(9999)
+        }
+        if (g > trivialengthprime+nummindwandering & g < trivialengthprime+nummindwandering+interveningtask){
+          trialtype.push(3)
+          triviafact.push(9999)
+        }
+        if (g == trivialengthprime+nummindwandering+interveningtask){
+          trialtype.push(4)
+          triviafact.push(9999)
+          shuffle(random_item)
+        }
+        if (g > trivialengthprime+nummindwandering+interveningtask){
+          h++;
+          trialtype.push(5)
+          triviafact.push(random_item[h])
+        }
+      }
+
+      trialmatrix = [trialtype,triviafact]
+
+      //Code that prints out the trial matrix to a file
+      //download(trialmatrix, 'json.txt', 'text/plain');
+      runTrial();
+    };
+
+    //#######################################################//
+    //------------------INITIALIZING VARIABLES---------------//
+    //#######################################################//
+    i=0;
+    acccount = 0;
+    acctotalcount = 0;
+    notfullscreen = 0;
+    instructionson = 0;
+    miniblockon = 0;
+    block = -1;
+    trialcount = 0;
+    var totalcount = 0;
+    var instructioncount = 0;
+    stimscreencount = 0;
+
+    //variables that just need to be
+    type = 0;
+    jokes = 0;
+
+    //logfile
+    var data=[['']];
+    var runStart;
+    var logCounter = 0;
+    var onset;
+    var d1;
+    var checkResponse = false;
+    var timeoutHandle = null;
+
+    //#######################################################//
+    //------------------EXPERIMENT SCREENS-------------------//
+    //#######################################################//
+
+    //---------------ADDING TASK SCREENS--------------------//
+    function interveningtask_screen(){
+      d1 = new Date();
+      onset = d1.getTime() - runStart;
+      type = 5;
+      acc = 99;
+      var c = document.getElementById("myCanvas");
+      var ctx = c.getContext("2d");
+      ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+
+      //sets up the text attributes
+      ctx.font="bold 20px Arial";
+      ctx.fillStyle="white";
+      ctx.textBaseline="middle";
+      ctx.textAlign="center";
+
+      randomnum1 = getRandomInt(100)
+      randomnum2 = getRandomInt(100)
+      randomnum3 = getRandomInt(100)
+      randomnum4 = getRandomInt(100)
+
+      ctx.fillText("("+randomnum1+" + "+randomnum2+") > ("+randomnum3+" - "+randomnum4+")",myCanvas.width/2,myCanvas.height/2);
+      ctx.fillText("Press 1 if the above mathematical statement is true.",myCanvas.width/2,(myCanvas.height/2)+200);
+      ctx.fillText("Press 2 if the above mathematical statement is false.",myCanvas.width/2,(myCanvas.height/2)+250);
+
+      //record presentation data
+      data[logCounter] = ["ITP:", i, randomnum1, randomnum2, randomnum3, randomnum4,
+      trialmatrix[0][i],trialmatrix[1][i]];
+      logCounter++;
+
+    };
+
+    //---------------------TRIVIA SCREENS--------------------//
+    function trivia_prime(config){
+      d1 = new Date();
+      onset = d1.getTime() - runStart;
+      type = 1;
+      acc = 99;
+      var c = document.getElementById("myCanvas");
+      var ctx = c.getContext("2d");
+      ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+
+      //sets up the text attributes
+      ctx.font="bold 20px Arial";
+      ctx.fillStyle="white";
+      ctx.textBaseline="middle";
+      ctx.textAlign="center";
+
+      ctx.fillText(triviaitems[config],myCanvas.width/2,myCanvas.height/2);
+
+      //record presentation data
+      data[logCounter] = ["PRP:", i, onset, triviaitems[config], config, 9999,
+      trialmatrix[0][i],trialmatrix[1][i]];
+      logCounter++;
+
+      //timeout variable
+      timeoutIMAGE = setTimeout(iti_screen,ITEMinterval);
+    };
+
+    //------------------------MW SCREENS--------------------//
+    function mindwandering(){
+      d1 = new Date();
+      onset = d1.getTime() - runStart;
+      type = 4;
+      $("#startButton").hide();
+      ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+      ctx.font="25px Arial";
+      ctx.fillStyle="white";
+      ctx.textBaseline="middle";
+      ctx.textAlign="center";
+
+      ctx.fillText("Just prior to the onset of this screen, I was:", (myCanvas.width/2), (myCanvas.height/2)-50);
+      ctx.fillText("(5) Focused on the task.", (myCanvas.width/2), (myCanvas.height/2));
+      ctx.fillText("(6) Not focused on the task, but I WAS trying to focus on it.", (myCanvas.width/2), (myCanvas.height/2)+50);
+      ctx.fillText("(7) Not focused on the task, and I WASN'T trying to focus on it.", (myCanvas.width/2), (myCanvas.height/2)+100);
+
+      ctx.fillText("Please press the corresponding number to indiciate your choice.", (myCanvas.width/2), (myCanvas.height/2)+200);
+
+      //record presentation data
+      data[logCounter] = ["MWP:", i, onset, 9999, 9999, 9999,
+      trialmatrix[0][i],trialmatrix[1][i]];
+      logCounter++;
+    };
+
+    //------------------TRIVIA PROBE SCREENS-----------------//
+    function trivia_probe(config){
+      d1 = new Date();
+      onset = d1.getTime() - runStart;
+      type = 1;
+      acc = 99;
+      var c = document.getElementById("myCanvas");
+      var ctx = c.getContext("2d");
+      ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+
+      //sets up the text attributes
+      ctx.font="bold 70px Arial";
+      ctx.fillStyle="white";
+      ctx.textBaseline="middle";
+      ctx.textAlign="center";
+
+      ctx.fillText(triviaitems[config],myCanvas.width/2,myCanvas.height/2);
+
+      ctx.font="bold 15px Arial";
+
+      ctx.fillText("1",(myCanvas.width/2)-325,(myCanvas.height/2)+100);
+      ctx.fillText("Definitely False",(myCanvas.width/2)-325,(myCanvas.height/2)+120);
+
+      ctx.fillText("2",(myCanvas.width/2)-195,(myCanvas.height/2)+100);
+      ctx.fillText("---------------",(myCanvas.width/2)-195,(myCanvas.height/2)+120);
+
+      ctx.fillText("3",(myCanvas.width/2)-65,(myCanvas.height/2)+100);
+      ctx.fillText("---------------",(myCanvas.width/2)-65,(myCanvas.height/2)+120);
+
+      ctx.fillText("4",(myCanvas.width/2)+65,(myCanvas.height/2)+100);
+      ctx.fillText("---------------",(myCanvas.width/2)+65,(myCanvas.height/2)+120);
+
+      ctx.fillText("5",(myCanvas.width/2)+195,(myCanvas.height/2)+100);
+      ctx.fillText("---------------",(myCanvas.width/2)+195,(myCanvas.height/2)+120);
+
+      ctx.fillText("6",(myCanvas.width/2)+325,(myCanvas.height/2)+100);
+      ctx.fillText("Definitely True",(myCanvas.width/2)+325,(myCanvas.height/2)+120);
+
+      //record presentation data
+      data[logCounter] = ["PP:", i, onset, triviaitems[config], config, 9999,
+      trialmatrix[0][i],trialmatrix[1][i]];
+      logCounter++;
+
+      //timeout variable
+      //timeoutIMAGE = setTimeout(iti_screen,ITEMinterval);
+    };
+
+    //--------------------RECORD NO RESPONSE----------------//
+    function record_noresponse(){
+
+      data[logCounter] = ["SR:", 9999, 9999, 9999, 9999,
+      trialmatrix[0][i],trialmatrix[1][i]];
+      logCounter++;
+    }
+
+    //-----------------------ITI SCREENS-------------------//
+    function iti_screen(){
+      type = 0;
+      var c = document.getElementById("myCanvas");
+      var ctx = c.getContext("2d");
+      ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+
+      //sets up the text attributes
+      ctx.font="bold 30px Arial";
+      ctx.textBaseline="middle";
+      ctx.textAlign="center";
+      ctx.fillText("*",myCanvas.width/2,(myCanvas.height/2));
+
+      //timeout variable
+      i++;
+      timeoutITI = setTimeout(runTrial,ITIinterval);
+    };
+
+    //-------------------COUNTDOWN SCREENS----------------//
+    function countDown(time){
+      type = 0;
+      if (time > 0)
+      {
+        $("#startButton").hide();
+        ctx.fillStyle = "white";
+        ctx.font="60px Arial";
+        ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+        ctx.fillText(""+time, 450, 450);
+        timeoutcountdown = setTimeout(function(){countDown(time-1)},750);
+      }
+      else
+      {
+        iti_screen();
+      }
+    };
+
+    //#######################################################//
+    //-----------------INSTRUCTION SCREENS-------------------//
+    //#######################################################//
+    function instructions1(){
+      type = 3;
+      document.getElementById("myCanvas").style.cursor = "pointer";
+      $("#startButton").hide();
+      ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+      ctx.font="25px Arial";
+      ctx.fillStyle="white";
+      ctx.textBaseline="middle";
+      ctx.textAlign="center";
+
+      ctx.font="bold 45px Arial";
+      ctx.fillText("You will now begin the task.", (myCanvas.width/2), (myCanvas.height/2)-400);
+      ctx.font="25px Arial";
+      ctx.fillText("You will complete blocks of trials, taking ~60min in total.", (myCanvas.width/2), (myCanvas.height/2)-350);
+      ctx.fillText("__________________________________________________________________________________", (myCanvas.width/2), (myCanvas.height/2)-340);
+      ctx.textAlign="left";
+      ctx.fillText("In the first section of the experiment today, please read each statement", 0, (myCanvas.height/2)-300);
+      ctx.fillText("carefully, and do your best to pay attention for the full duration of the study.", (0.0), (myCanvas.height/2)-250);
+      ctx.fillText("Sometimes you might be asked if you were paying attention. Please answer", (0.0), (myCanvas.height/2)-200);
+      ctx.fillText("honestly.", (0.0), (myCanvas.height/2)-150);
+
+
+      ctx.fillText("In the second section, please rate the mathematical statements as to", (0.0), (myCanvas.height/2)-50);
+      ctx.fillText("whether they are true or false.", (0.0), (myCanvas.height/2)-0);
+
+      ctx.fillText("In the third section, please rate the likelihood that many different ", (0.0), (myCanvas.height/2)+100);
+      ctx.fillText("statements are true. Sometimes you might be asked if you were paying", (0.0), (myCanvas.height/2)+150);
+      ctx.fillText("attention. Please answer honestly.", 0, (myCanvas.height/2)+200);
+
+      ctx.fillText("More instructions will be given before each section.", 0, (myCanvas.height/2)+300);
+
+      ctx.textAlign="center";
+      ctx.fillText("Press any button to begin the task.", (myCanvas.width/2), (myCanvas.height/2)+420);
+    };
+
+    function instructions2(){
+      type = 3;
+      document.getElementById("myCanvas").style.cursor = "pointer";
+      $("#startButton").hide();
+      ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+      ctx.font="25px Arial";
+      ctx.fillStyle="white";
+      ctx.textBaseline="middle";
+      ctx.textAlign="center";
+
+      ctx.font="bold 45px Arial";
+      ctx.fillText("You will start the 2nd section.", (myCanvas.width/2), (myCanvas.height/2)-400);
+      ctx.font="25px Arial";
+      ctx.fillText("__________________________________________________________________________________", (myCanvas.width/2), (myCanvas.height/2)-340);
+      ctx.textAlign="left";
+      ctx.fillText("In the following trials, please rate whether the mathematical statement", 0, (myCanvas.height/2)-300);
+      ctx.fillText("shown is true or false. ", (0.0), (myCanvas.height/2)-250);
+
+
+      ctx.fillText("For example, you might see:", (0.0), (myCanvas.height/2)-150);
+      ctx.fillText("(52 + 41) > (63 - 8)", (0.0), (myCanvas.height/2)-100);
+
+      ctx.fillText("If this is a true statement, press 1.", (0.0), (myCanvas.height/2));
+      ctx.fillText("If this is a false statement, press 2.", (0.0), (myCanvas.height/2)+50);
+
+      ctx.textAlign="center";
+      ctx.fillText("Press any button to resume the task.", (myCanvas.width/2), (myCanvas.height/2)+420);
+    };
+
+    function instructions3(){
+      type = 3;
+      document.getElementById("myCanvas").style.cursor = "pointer";
+      $("#startButton").hide();
+      ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+      ctx.font="25px Arial";
+      ctx.fillStyle="white";
+      ctx.textBaseline="middle";
+      ctx.textAlign="center";
+
+      ctx.font="bold 45px Arial";
+      ctx.fillText("You will now start the 3rd section.", (myCanvas.width/2), (myCanvas.height/2)-400);
+      ctx.font="25px Arial";
+      ctx.fillText("__________________________________________________________________________________", (myCanvas.width/2), (myCanvas.height/2)-380);
+      ctx.textAlign="left";
+      ctx.fillText("On the following pages, you will rate the likelihood that many different ", 0, (myCanvas.height/2)-350);
+      ctx.fillText("statements are true. You can select any number on a scale from 1 ", (0.0), (myCanvas.height/2)-310);
+      ctx.fillText("(definitely false) to 6 (definitely true). 1 and 6 are the opposing ", (0.0), (myCanvas.height/2)-270);
+      ctx.fillText("extremes on the scale. You can select any number from 1 to 6 in ", (0.0), (myCanvas.height/2)-230);
+      ctx.fillText("accordance with your view.", (0.0), (myCanvas.height/2)-190);
+
+
+      ctx.fillText("For example, you might see statements like the one below, and you will ", (0.0), (myCanvas.height/2)-90);
+      ctx.fillText("rate the likelihood that each statement is true on the scale provided:", (0.0), (myCanvas.height/2)-50);
+      ctx.textAlign="center";
+      ctx.fillText("The capital of Malaysia is Kuala Lumpur. ", (myCanvas.width/2), (myCanvas.height/2)+40);
+
+      ctx.font="bold 15px Arial";
+      ctx.textBaseline="middle";
+      ctx.textAlign="center";
+
+      ctx.fillText("1",(myCanvas.width/2)-325,(myCanvas.height/2)+100);
+      ctx.fillText("Definitely False",(myCanvas.width/2)-325,(myCanvas.height/2)+120);
+
+      ctx.fillText("2",(myCanvas.width/2)-195,(myCanvas.height/2)+100);
+      ctx.fillText("---------------",(myCanvas.width/2)-195,(myCanvas.height/2)+120);
+
+      ctx.fillText("3",(myCanvas.width/2)-65,(myCanvas.height/2)+100);
+      ctx.fillText("---------------",(myCanvas.width/2)-65,(myCanvas.height/2)+120);
+
+      ctx.fillText("4",(myCanvas.width/2)+65,(myCanvas.height/2)+100);
+      ctx.fillText("---------------",(myCanvas.width/2)+65,(myCanvas.height/2)+120);
+
+      ctx.fillText("5",(myCanvas.width/2)+195,(myCanvas.height/2)+100);
+      ctx.fillText("---------------",(myCanvas.width/2)+195,(myCanvas.height/2)+120);
+
+      ctx.fillText("6",(myCanvas.width/2)+325,(myCanvas.height/2)+100);
+      ctx.fillText("Definitely True",(myCanvas.width/2)+325,(myCanvas.height/2)+120);
+
+      ctx.font="25px Arial";
+      ctx.textAlign="left";
+      ctx.fillText("Please make a rating for the example above.", 0, (myCanvas.height/2)+200);
+
+      ctx.fillText("Please just do your best on the task. Please do not use any outside ", 0, (myCanvas.height/2)+260);
+      ctx.fillText("resources (for example: Google or a friend) to make your ratings. If you ", 0, (myCanvas.height/2)+300);
+      ctx.fillText("don't know the answer, do your best to guess. There is no penalty for ", 0, (myCanvas.height/2)+340);
+      ctx.fillText("guessing.", 0, (myCanvas.height/2)+380);
+
+      ctx.textAlign="center";
+      ctx.fillText("Press any button to resume the task.", (myCanvas.width/2), (myCanvas.height/2)+425);
+    };
+
+    //#######################################################//
+    //------------------MINIBLOCK SCREENS--------------------//
+    //#######################################################//
+
+    function miniblockscreen(){
+      type = 3;
+      $("#startButton").hide();
+      ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+      ctx.font="25px Arial";
+      ctx.fillStyle="white";
+      ctx.textBaseline="middle";
+      ctx.textAlign="center";
+
+      ctx.fillText("You are "+Math.round((i/blocklength)*100)+"% through this block.", (myCanvas.width/2), (myCanvas.height/2)-50);
+      ctx.fillText("Your accuracy is "+Math.round((acccount/acctotalcount)*100)+"%.", (myCanvas.width/2), (myCanvas.height/2));
+      ctx.fillText("Remember you need >75% accuracy to be paid.", (myCanvas.width/2), (myCanvas.height/2)+50);
+      ctx.fillText("Press any key to continue.", (myCanvas.width/2), (myCanvas.height/2)+100);
+    };
+
+    //#######################################################//
+    //-----------------------ERROR SCREENS-------------------//
+    //#######################################################//
+
+    //-----------------------NOT FULL SCREEN----------------//
+    function nonfullscreen(){
+      type = 2;
+      ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+      ctx.font="bold 30px Arial";
+      ctx.fillStyle="white";
+      ctx.textBaseline="middle";
+      ctx.textAlign="center";
+      if (notfullscreen == 0){
+        ctx.fillText("Your screen is not full screen.",myCanvas.width/2,myCanvas.height/2);
+        ctx.fillText("Please correct this and press any key to continue.",myCanvas.width/2,(myCanvas.height/2)+50);
+        ctx.fillText("If you exit full screen one more time during this experiment,",myCanvas.width/2,(myCanvas.height/2)+100);
+        ctx.fillText("you will have to restart the experiment and will not be paid",myCanvas.width/2,(myCanvas.height/2)+150);
+        ctx.fillText("for the previous time you have spent doing the experiment.",myCanvas.width/2,(myCanvas.height/2)+200);
+        notfullscreen++;
+      }
+      else {ctx.fillText("Please refresh the page to restart the experiment.",myCanvas.width/2,myCanvas.height/2);
+      notfullscreen++;
+      }
+    };
+
+    //-----------------------CHECKS SIZE SCREEN----------------//
+    function checkSize(){
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      if (w < 800 || h < 600) // 800 by 600 is the lowest resolution on my laptop; seems like a good "minimum" (basically need 500 x 500 at least)
+      {
+        checkwindowsize = 1;
+      }
+      else // if their screen is the proper size...
+      {
+        checkwindowsize = 0;
+      }
+    };
+
+    //#######################################################//
+    //-----------------------RUN EXPERIMENT------------------//
+    //#######################################################//
+    function runTrial(){
+        if (trialcount < trialmatrix[0].length){
+          if (trialmatrix[0][i] == 0){
+            instructions1();
+          }
+          if (trialmatrix[0][i] == 1){
+            trivia_prime(trialmatrix[1][i]);
+          }
+          if (trialmatrix[0][i] == 2){
+            instructions2();
+          }
+          if (trialmatrix[0][i] == 3){
+            interveningtask_screen();
+          }
+          if (trialmatrix[0][i] == 4){
+            instructions3();
+          }
+          if (trialmatrix[0][i] == 5){
+            trivia_probe(trialmatrix[1][i]);
+          }
+          if (trialmatrix[0][i] == 99){
+            mindwandering();
+          }
+        }
+        else {
+          //alert(data.join(";"));
+          $("#info").css("color","white");
+          //$("#info").show();
+          $("#info").text(data.join(";"));
+          //$("#mturk_form").show();
+          $("#RTs", opener.window.document).val(data.join(";"));
+          opener.updateMainMenu(3);
+          JavaScript:window.close();
+        }
+      };
+
+      $("body").keypress(function(event){
+        //clearTimeout();
+        if (type == 1 || type == 2 || type == 3 || type == 4 || type == 5) {key = event.keyCode || event.which};
+        //creates more data
+        d1 = new Date();
+        Ronset = d1.getTime()-runStart;
+        respTime = Ronset-onset;
+        acc = 0;
+        if (type == 0 || type == 1 || type == 2) {jokes++;}
+        else if (type == 1) {
+          if(key == 49 ||key == 50 ||key == 51 ||key == 52 ||key == 53 ||key == 54){
+            data[logCounter] = ["PR:", i, Ronset, key, respTime, 9999,
+            trialmatrix[0][i],trialmatrix[1][i]];
+            logCounter++;
+            iti_screen();
+          }
+        }
+        else if (type == 3) {document.getElementById("myCanvas").style.cursor = "none"; countDown(3);}
+        else if (type == 4) {
+          if(key == 53 || key == 54 || key == 55){
+            data[logCounter] = ["MWR:", i, Ronset, key, respTime, 9999,
+            trialmatrix[0][i],trialmatrix[1][i]];
+            logCounter++;
+            iti_screen();
+          }
+        }
+        else if (type == 5) {
+          if(key == 49 || key == 50){
+            data[logCounter] = ["ITR:", i, Ronset, key, respTime, 9999,
+            trialmatrix[0][i],trialmatrix[1][i]];
+            logCounter++;
+            iti_screen();
+          }
+        }
+      });
+
+        //Start stuff
+        $("#info").hide();
+        $("#form").hide();
+        $('#button').hide();
+        $("#mturk_form").hide();
+        d1 = new Date();
+        runStart = d1.getTime();
+        createTrialMatrix();
+
+      });
+
+      </script>
+    </head>
+    <body>
+      <table>
+        <tr>
+          <td>
+            <canvas id="myCanvas" width="900" height="900"> </canvas>
+            <div style="text-align:center; align:center;">
+            </div>
+            <div style="text-align:center;">
+              <button id="startButton">Start</button>
+            </div>
+            <div style="text-align:center;">
+              <button id="button">NEXT</button>
+            </div>
+            <form id="form" onsubmit="return false;">
+              <input   style=position:absolute;top:80%;left:40%;width:10%; type="text" id="userInput">
+            </form>
+            <form id="mturk_form" method="POST" action="http://152.3.33.14/AMTSubmit/dataHandler.php">
+              <!-- <form id="mturk_form" method="POST" action="https://workersandbox.mturk.com/mturk/externalSubmit"> -->
+              <!-- <form id="mturk_form" method="POST" action="https://wwww.mturk.com/mturk/externalSubmit"> -->
+              <input type="hidden" id="assignmentId" name="assignmentId" value="">
+              <input type="hidden" id="workerId" name="workerId" value="">
+              <input type="hidden" id="hitId" name="hitId" value="">
+              <input type="hidden" id="RTs" name="RTs" value="">
+              <input type="hidden" id="demographics" name="demographics" value="truthmindwandering">
+              <input type="hidden" id="ExpName" name="ExpName" value="truthmindwandering">
+            </form>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>

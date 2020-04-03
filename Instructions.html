@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="Task.css" type="text/css" charset="utf-8">
+  <script type="text/javascript" src="jquery-3.2.1.js"></script>
+  <script type="text/javascript" src="images.js"></script>
+  <script type="text/javascript">
+
+  /*function gup(name, tmpURL)
+	{
+		var regexS = "[\\?&]"+name+"=([^&#]*)";
+		var regex = new RegExp(regexS);
+		var results = regex.exec(tmpURL);
+		if (results == null)
+		{
+			return "";
+		}
+		else
+		{
+			return results[1];
+		}
+	}*/
+
+  $(document).ready(function(){
+
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
+    var i = 0;
+
+    var fileName = ['examplepics/example1.png','examplepics/example2.png','examplepics/example3.png','examplepics/example4.png','examplepics/example5.png']
+		var img = new Array(fileName.length);
+		var imgCount = 0;
+
+		function loadImage()
+		{
+			if (imgCount < fileName.length)
+			{
+				img[imgCount] = new Image();
+				img[imgCount].src=fileName[imgCount];
+				img[imgCount].onload=loadImage;
+				imgCount++;
+			}
+      runTrial();
+		}
+
+    function blockinstruction1(){
+
+      $("#continueButton").show();
+      $("#backButton").hide();
+
+      if (i == 0){
+        ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+        ctx.font="25px Arial";
+        ctx.fillStyle="white";
+        ctx.textBaseline="middle";
+        ctx.textAlign="center";
+
+        ctx.font="bold 45px Arial";
+        ctx.fillText("Today you will complete a simple task.", (myCanvas.width/2), (myCanvas.height/2)-400);
+        ctx.font="25px Arial";
+        ctx.fillText("You will complete blocks of trials, taking ~60min in total.", (myCanvas.width/2), (myCanvas.height/2)-350);
+        ctx.fillText("__________________________________________________________________________________", (myCanvas.width/2), (myCanvas.height/2)-340);
+        ctx.textAlign="left";
+        ctx.fillText("In the first section of the experiment today, please read each statement", 0, (myCanvas.height/2)-300);
+        ctx.fillText("carefully, and do your best to pay attention for the full duration of the study.", (0.0), (myCanvas.height/2)-250);
+        ctx.fillText("Sometimes you might be asked if you were paying attention. Please answer", (0.0), (myCanvas.height/2)-200);
+        ctx.fillText("honestly.", (0.0), (myCanvas.height/2)-150);
+
+
+        ctx.fillText("In the second section, please rate the mathematical statements as to", (0.0), (myCanvas.height/2)-50);
+        ctx.fillText("whether they are true or false.", (0.0), (myCanvas.height/2)-0);
+
+        ctx.fillText("In the third section, please rate the likelihood that many different ", (0.0), (myCanvas.height/2)+100);
+        ctx.fillText("statements are true. Sometimes you might be asked if you were paying", (0.0), (myCanvas.height/2)+150);
+        ctx.fillText("attention. Please answer honestly.", 0, (myCanvas.height/2)+200);
+
+        ctx.fillText("More instructions will be given before each section.", 0, (myCanvas.height/2)+300);
+        ctx.textAlign="center";
+        ctx.fillText("Press the button below for more details on the task.", (myCanvas.width)/2, (myCanvas.height/2)+400);
+      }
+      else if (i == 1){
+        $("#backButton").show();
+
+        ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+        ctx.font="25px Arial";
+        ctx.fillStyle="white";
+        ctx.textBaseline="middle";
+        ctx.textAlign="left";
+        ctx.fillText("In the first section:", (myCanvas.width/2)-450, (myCanvas.height/2)-400);
+
+        ctx.fillText("Trivia statements will appear on the screen in regular intervals.", (myCanvas.width/2)-450, (myCanvas.height/2)-350);
+        ctx.fillText("Please read each statement carefully, and do your best to pay", (myCanvas.width/2)-450, (myCanvas.height/2)-320);
+        ctx.fillText("attention for the full duration of the study.", (myCanvas.width/2)-450, (myCanvas.height/2)-290);
+
+        ctx.fillText("For example, you might see the following statement:", (myCanvas.width/2)-450, (myCanvas.height/2)-200);
+        ctx.textAlign="center";
+        ctx.fillText("The capital of the Netherlands is The Hague.", myCanvas.width/2, (myCanvas.height/2)-100);
+        ctx.textAlign="left";
+        ctx.fillText("Simply read the statement and then wait for the next one to appear.", (myCanvas.width/2)-450, (myCanvas.height/2)-0);
+
+        ctx.textAlign="center";
+        ctx.fillText("Use the buttons below to see the next instructions or go back", (myCanvas.width/2), (myCanvas.height/2)+350);
+        ctx.fillText("to the previous instructions.", (myCanvas.width/2), (myCanvas.height/2)+400);
+
+      }
+    else if (i == 2){
+      $("#startButton").hide();
+      $("#backButton").show();
+
+      ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+      ctx.font="25px Arial";
+      ctx.fillStyle="white";
+      ctx.textBaseline="middle";
+      ctx.textAlign="left";
+
+      ctx.fillText("While you are completing this task, you may find yourself thinking about", 0, (myCanvas.height/2)-370);
+      ctx.fillText("things other than the task. These thoughts are referred to as", 0, (myCanvas.height/2)-340);
+      ctx.fillText("“task-unrelated thoughts.” Having task-unrelated thoughts is perfectly", 0, (myCanvas.height/2)-310);
+      ctx.fillText("normal, especially when one has to do the same thing for a long period ", 0, (myCanvas.height/2)-280);
+      ctx.fillText("of time.", 0, (myCanvas.height/2)-250);
+
+      ctx.fillText("While you are completing this task, we would like to determine how", 0, (myCanvas.height/2)-200);
+      ctx.fillText("frequently you are focused on the task and how frequently you are", 0, (myCanvas.height/2)-170);
+      ctx.fillText("thinking about thoughts that are unrelated to the task. To do this,", 0, (myCanvas.height/2)-140);
+      ctx.fillText("every once in a while, the task will temporarily stop and you will be  ", 0, (myCanvas.height/2)-110);
+      ctx.fillText("presented a thought-sampling screen that will ask you to indicate whether,", 0, (myCanvas.height/2)-80);
+      ctx.fillText("just before seeing the thought-sampling screen, you were focused on the", 0, (myCanvas.height/2)-50);
+      ctx.fillText("task or focused on task-unrelated thoughts.", 0, (myCanvas.height/2)-20);
+
+      ctx.textAlign="center";
+      ctx.fillText("Use the buttons below to see the next instructions or go back", (myCanvas.width/2), (myCanvas.height/2)+350);
+      ctx.fillText("to the previous instructions.", (myCanvas.width/2), (myCanvas.height/2)+400);
+    }
+    else if (i == 3){
+      $("#startButton").hide();
+      $("#backButton").show();
+
+      ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+      ctx.font="25px Arial";
+      ctx.fillStyle="white";
+      ctx.textBaseline="middle";
+      ctx.textAlign="left";
+
+      ctx.fillText("Being focused on the task means that, just before the thought-sampling ", 0, (myCanvas.height/2)-400);
+      ctx.fillText("screen appeared, you were focused on some aspect of the task at hand. ", 0, (myCanvas.height/2)-370);
+      ctx.fillText("For example, if you were thinking about your performance on the task, or ", 0, (myCanvas.height/2)-340);
+      ctx.fillText("if you were thinking about when you should make a button press, these ", 0, (myCanvas.height/2)-310);
+      ctx.fillText("thoughts would count as being on-task. ", 0, (myCanvas.height/2)-280);
+
+      ctx.fillText("On the other hand, experiencing task-unrelated thoughts means that you ", 0, (myCanvas.height/2)-200);
+      ctx.fillText("were thinking about something completely unrelated to the task. Some ", 0, (myCanvas.height/2)-170);
+      ctx.fillText("examples of task-unrelated thoughts include thoughts about what to eat ", 0, (myCanvas.height/2)-140);
+      ctx.fillText("for dinner, thoughts about an upcoming event, or thoughts about   ", 0, (myCanvas.height/2)-110);
+      ctx.fillText("something that happened to you earlier in the day. Any thoughts that you ", 0, (myCanvas.height/2)-80);
+      ctx.fillText("have that are not related to the task you are completing count as task", 0, (myCanvas.height/2)-50);
+      ctx.fillText("-unrelated.", 0, (myCanvas.height/2)-20);
+
+      ctx.textAlign="center";
+      ctx.fillText("Use the buttons below to see the next instructions or go back", (myCanvas.width/2), (myCanvas.height/2)+350);
+      ctx.fillText("to the previous instructions.", (myCanvas.width/2), (myCanvas.height/2)+400);
+    }
+    else if (i == 4){
+      $("#startButton").hide();
+      $("#backButton").show();
+
+      ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+      ctx.font="25px Arial";
+      ctx.fillStyle="white";
+      ctx.textBaseline="middle";
+      ctx.textAlign="left";
+
+      ctx.fillText("Importantly, task-unrelated thoughts can occur in cases where you are ", 0, (myCanvas.height/2)-400);
+      ctx.fillText("trying to focus on the task, but your thoughts unintentionally drift to task-", 0, (myCanvas.height/2)-370);
+      ctx.fillText("unrelated topics, OR they can occur in cases where you are not trying to", 0, (myCanvas.height/2)-340);
+      ctx.fillText("focus on the task, and you begin to think about task-unrelated topics. ", 0, (myCanvas.height/2)-310);
+      ctx.fillText("When the thought-sampling screen is presented, we will ask you to ", 0, (myCanvas.height/2)-280);
+      ctx.fillText("indicate which (if any) of these two types of task-unrelated thoughts you ", 0, (myCanvas.height/2)-250);
+      ctx.fillText("were experiencing. ", 0, (myCanvas.height/2)-220);
+
+      ctx.fillText("To do this, we will present you with a thought-sampling screen that", 0, (myCanvas.height/2)-180);
+      ctx.fillText("looks like this:", 0, (myCanvas.height/2)-150);
+
+      ctx.font="25px Arial";
+      ctx.fillStyle="white";
+      ctx.textBaseline="middle";
+      ctx.textAlign="center";
+
+      ctx.fillText("__________________________________________", (myCanvas.width/2), (myCanvas.height/2)-130);
+
+      ctx.fillText("Just prior to the onset of this screen, I was:", (myCanvas.width/2), (myCanvas.height/2)-50);
+      ctx.fillText("(5) Focused on the task.", (myCanvas.width/2), (myCanvas.height/2));
+      ctx.fillText("(6) Not focused on the task, but I WAS trying to focus on it.", (myCanvas.width/2), (myCanvas.height/2)+50);
+      ctx.fillText("(7) Not focused on the task, and I WASN'T trying to focus on it.", (myCanvas.width/2), (myCanvas.height/2)+100);
+
+      ctx.fillText("Please press the corresponding number to indiciate your choice.", (myCanvas.width/2), (myCanvas.height/2)+200);
+
+      ctx.fillText("Use the buttons below to see the next instructions or go back", (myCanvas.width/2), (myCanvas.height/2)+350);
+      ctx.fillText("to the previous instructions.", (myCanvas.width/2), (myCanvas.height/2)+400);
+    }
+    else if (i == 5){
+      $("#startButton").hide();
+      $("#backButton").show();
+
+      ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+      ctx.font="25px Arial";
+      ctx.fillStyle="white";
+      ctx.textBaseline="middle";
+      ctx.textAlign="left";
+
+      ctx.fillText("In the second section:", 0, (myCanvas.height/2)-400);
+
+      ctx.fillText("You will rate whether a mathematical statement shown is true or false. ", 0, (myCanvas.height/2)-300);
+
+      ctx.fillText("For example, you might see:", (0.0), (myCanvas.height/2)-150);
+      ctx.fillText("(67 + 21) > (2 - 46)", (0.0), (myCanvas.height/2)-100);
+
+      ctx.fillText("If this is a true statement, press 1.", (0.0), (myCanvas.height/2));
+      ctx.fillText("If this is a false statement, press 2.", (0.0), (myCanvas.height/2)+50);
+      ctx.textAlign="center";
+
+      ctx.fillText("Use the buttons below to see the next instructions or go back", (myCanvas.width/2), (myCanvas.height/2)+350);
+      ctx.fillText("to the previous instructions.", (myCanvas.width/2), (myCanvas.height/2)+400);
+
+    }
+    else if (i == 6){
+      $("#startButton").hide();
+      $("#backButton").show();
+
+      ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+      ctx.font="25px Arial";
+      ctx.fillStyle="white";
+      ctx.textBaseline="middle";
+      ctx.textAlign="left";
+
+      ctx.fillText("In the third section:", 0, (myCanvas.height/2)-400);
+
+      ctx.fillText("On the following pages, you will rate the likelihood that many different ", 0, (myCanvas.height/2)-350);
+      ctx.fillText("statements are true. You can select any number on a scale from 1 ", (0.0), (myCanvas.height/2)-310);
+      ctx.fillText("(definitely false) to 6 (definitely true). 1 and 6 are the opposing ", (0.0), (myCanvas.height/2)-270);
+      ctx.fillText("extremes on the scale. You can select any number from 1 to 6 in ", (0.0), (myCanvas.height/2)-230);
+      ctx.fillText("accordance with your view.", (0.0), (myCanvas.height/2)-190);
+
+
+      ctx.fillText("For example, you might see statements like the one below, and you will ", (0.0), (myCanvas.height/2)-90);
+      ctx.fillText("rate the likelihood that each statement is true on the scale provided:", (0.0), (myCanvas.height/2)-50);
+      ctx.textAlign="center";
+      ctx.fillText("The capital of Malaysia is Kuala Lumpur. ", (myCanvas.width/2), (myCanvas.height/2)+40);
+
+      ctx.font="bold 15px Arial";
+      ctx.textBaseline="middle";
+      ctx.textAlign="center";
+
+      ctx.fillText("1",(myCanvas.width/2)-325,(myCanvas.height/2)+100);
+      ctx.fillText("Definitely False",(myCanvas.width/2)-325,(myCanvas.height/2)+120);
+
+      ctx.fillText("2",(myCanvas.width/2)-195,(myCanvas.height/2)+100);
+      ctx.fillText("---------------",(myCanvas.width/2)-195,(myCanvas.height/2)+120);
+
+      ctx.fillText("3",(myCanvas.width/2)-65,(myCanvas.height/2)+100);
+      ctx.fillText("---------------",(myCanvas.width/2)-65,(myCanvas.height/2)+120);
+
+      ctx.fillText("4",(myCanvas.width/2)+65,(myCanvas.height/2)+100);
+      ctx.fillText("---------------",(myCanvas.width/2)+65,(myCanvas.height/2)+120);
+
+      ctx.fillText("5",(myCanvas.width/2)+195,(myCanvas.height/2)+100);
+      ctx.fillText("---------------",(myCanvas.width/2)+195,(myCanvas.height/2)+120);
+
+      ctx.fillText("6",(myCanvas.width/2)+325,(myCanvas.height/2)+100);
+      ctx.fillText("Definitely True",(myCanvas.width/2)+325,(myCanvas.height/2)+120);
+
+      ctx.font="25px Arial";
+      ctx.textAlign="left";
+      ctx.fillText("Please make a rating for the example above.", 0, (myCanvas.height/2)+200);
+
+      ctx.fillText("Please just do your best on the task. Please do not use any outside ", 0, (myCanvas.height/2)+260);
+      ctx.fillText("resources (for example: Google or a friend) to make your ratings. If you ", 0, (myCanvas.height/2)+300);
+      ctx.fillText("don't know the answer, do your best to guess. There is no penalty for ", 0, (myCanvas.height/2)+340);
+      ctx.fillText("guessing.", 0, (myCanvas.height/2)+380);
+      ctx.textAlign="center";
+
+      ctx.fillText("Use the buttons below to see the next instructions or go back.", (myCanvas.width/2), (myCanvas.height/2)+420);
+
+    }
+    else if (i == 7){
+      $("#startButton").hide();
+      $("#backButton").show();
+
+      ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+      ctx.font="25px Arial";
+      ctx.fillStyle="white";
+      ctx.textBaseline="middle";
+      ctx.textAlign="center";
+
+      ctx.fillText("This is the end of the instructions. Please use the buttons below to go back ", (myCanvas.width/2), (myCanvas.height/2));
+      ctx.fillText("to review the instructions if you have any questions, or to continue on to", (myCanvas.width/2), (myCanvas.height/2)+50);
+      ctx.fillText("the practice task.", (myCanvas.width/2), (myCanvas.height/2)+100);
+
+    }
+    }
+
+    function runTrial(){
+      if (i < 8){
+        blockinstruction1();
+      }
+      else {
+        opener.updateMainMenu(2);
+        JavaScript:window.close();
+      }
+    }
+
+loadImage();
+
+
+$("#continueButton").click(function(){i++; runTrial();});
+$("#backButton").click(function(){i--; runTrial();});
+          });
+
+          </script>
+        </head>
+        <body>
+          <table>
+            <tr>
+              <td>
+                <canvas id="myCanvas" width="900" height="900"> </canvas>
+                <div style="text-align:center; align:center;">
+                </div>
+                <div style="text-align:center;">
+                  <button id="backButton">Go Back</button>
+                  <button id="continueButton">Continue</button>
+                </div>
+                    <input type="hidden" id="assignmentId" name="assignmentId" value="">
+                    <input type="hidden" id="workerId" name="workerId" value="">
+                    <input type="hidden" id="hitId" name="hitId" value="">
+                    <input type="hidden" id="RTs" name="RTs" value="">
+                    <input type="hidden" id="ExpName" name="ExpName" value="truthmindwandering">
+                    <p style="font-family: Arial; color: white; font-size:24px"></p>
+                  </td>
+                </tr>
+              </table>
+            </body>
+            </html>
